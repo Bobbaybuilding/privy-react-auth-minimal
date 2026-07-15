@@ -1,6 +1,6 @@
-# Minimal Privy React Auth
+# Minimal Privy wallet funding playground
 
-A blank React app that opens Privy's standard authentication flow and creates an embedded Ethereum wallet for users who do not already have one.
+A minimal React app using Privy's standard authentication and wallet-funding modals. It creates an embedded Ethereum wallet for users who do not already have one and exposes Privy's combined fiat/crypto funding, fiat onramp, Bridge sandbox bank deposit, legacy funding, and account interfaces.
 
 ## Run locally
 
