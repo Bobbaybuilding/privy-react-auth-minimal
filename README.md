@@ -8,7 +8,9 @@ For a step-by-step guide on funding wallets with Apple Pay and Google Pay, check
 
 ## Live Demo
 
-[View Demo](https://privy-next-funding.vercel.app/)
+[View this deployment](https://privy-react-auth-minimal.vercel.app/)
+
+Privy's official funding starter is available at [privy-next-funding.vercel.app](https://privy-next-funding.vercel.app/).
 
 ## Quick Start
 
@@ -100,9 +102,37 @@ const { fundWallet } = useFundWallet();
 fundWallet(wallets[0].address, { asset: "USDC", amount: "15" });
 ```
 
+### 4. Deposit from a Bank Account
+
+The upstream `privy-next-funding` example does not include the bank deposit or virtual account flow. This repo adds Privy's documented `useFundWalletWithBankDeposit` hook.
+
+The `Bank deposit: KYC + virtual account` action opens Privy's Bridge sandbox flow. After the user completes KYC, Privy's modal returns virtual account deposit instructions for bank transfer funding.
+
+```tsx
+import { useFundWalletWithBankDeposit } from "@privy-io/react-auth";
+
+const { fund } = useFundWalletWithBankDeposit();
+
+await fund({
+  source: {
+    assets: ["gbp", "eur", "usd", "mxn", "brl"],
+    defaultAsset: "gbp",
+  },
+  destination: {
+    asset: "usdc",
+    chain: "eip155:8453",
+    address: wallet.address,
+  },
+  provider: "bridge-sandbox",
+});
+```
+
+For production, configure Bridge in the Privy Dashboard and switch the provider to `"bridge"`.
+
 ## Relevant Links
 
 - [Privy Dashboard](https://dashboard.privy.io)
 - [Privy Documentation](https://docs.privy.io)
 - [React SDK](https://www.npmjs.com/package/@privy-io/react-auth)
 - [Funding Guide](https://docs.privy.io/guide/react/recipes/misc/funding)
+- [Bank Deposits](https://docs.privy.io/wallets/funding/bank-deposits)

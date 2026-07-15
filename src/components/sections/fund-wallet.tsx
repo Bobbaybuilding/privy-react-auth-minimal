@@ -150,12 +150,12 @@ const FundWallet = () => {
       disabled: !isEvmWallet,
     },
     {
-      name: "Deposit from bank (Bridge sandbox)",
+      name: "Bank deposit: KYC + virtual account",
       function: () =>
         runModernFlow(() =>
           depositFromBank({
             source: {
-              assets: ["gbp", "eur", "usd"],
+              assets: ["gbp", "eur", "usd", "mxn", "brl"],
               defaultAsset: "gbp",
             },
             destination: { ...destination!, asset: "usdc" },
@@ -253,7 +253,7 @@ const FundWallet = () => {
     <Section
       name="Fund wallet"
       description={
-        "Explore Privy's current fiat, bank, exchange, and external-wallet funding flows. Modern fiat and Bridge actions use sandbox environments."
+        "Explore Privy's current fiat, bank, exchange, and external-wallet funding flows. The bank deposit action opens Bridge sandbox KYC and returns virtual account deposit instructions inside Privy's modal."
       }
       filepath="src/components/sections/fund-wallet"
       actions={availableActions}
