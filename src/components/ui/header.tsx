@@ -1,7 +1,4 @@
-"use client";
-
 import { ArrowRightIcon, ArrowUpRightIcon } from "@heroicons/react/16/solid";
-import { UserPill } from "@privy-io/react-auth/ui";
 import { PrivyLogo } from "./privy-logo";
 
 export function Header() {
@@ -16,7 +13,6 @@ export function Header() {
       </div>
 
       <div className="flex flex-row justify-end items-center gap-4 h-9">
-        <UserPill expanded />
         <a
           className="text-primary flex flex-row items-center gap-1 cursor-pointer"
           href="https://docs.privy.io/basics/react/installation"

@@ -1,5 +1,5 @@
 {
-  "name": "privy-react-auth-minimal",
+  "name": "create-next-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,15 +10,16 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
-    "@privy-io/react-auth": "3.35.0",
+    "@privy-io/react-auth": "^3.35.2",
     "@solana-program/memo": "^0.8.0",
     "@solana-program/system": "0.8.0",
     "@solana-program/token": "0.6.0",
     "@solana/kit": "3.0.3",
+    "@stripe/crypto": "^1.1.2",
     "bs58": "^6.0.0",
-    "next": "15.5.20",
-    "react": "19.2.7",
-    "react-dom": "19.2.7",
+    "next": "15.5.7",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-toastify": "^11.0.5",
     "viem": "^2.37.6"
   },
@@ -29,7 +30,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.5.20",
+    "eslint-config-next": "15.5.7",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

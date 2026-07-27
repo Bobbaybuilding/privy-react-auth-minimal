@@ -1,138 +1,100 @@
-# Privy funding playground
+# Funding onramps with Privy
 
-This project is based on Privy's official funding starter and showcases Privy's native wallet funding flows inside a Next.js application. It uses the current React SDK and adds Privy's combined fiat/crypto flow, fiat sandbox, and Bridge sandbox bank deposits to the official card, exchange, and external-wallet examples.
+This Next.js example shows a single-page funding demo with Privy React SDK modals. It covers login, automatic embedded-wallet creation, manual wallet creation, unified Add funds, crypto deposit addresses, direct fiat onramp funding, and sandbox Bridge bank deposits for Ethereum and Solana wallets.
 
-## 📖 Related Recipe
+## Live demo
 
-For a step-by-step guide on funding wallets with Apple Pay and Google Pay, check out our [Card-based Funding Recipe](https://docs.privy.io/recipes/card-based-funding) in the Privy documentation.
+[View demo](https://privy-next-funding.vercel.app/)
 
-## Live Demo
+## Source map
 
-[View this deployment](https://privy-react-auth-minimal.vercel.app/)
+- [`src/app/page.tsx`](./src/app/page.tsx): Login state, page layout, active sections, and `UserObject`
+- [`src/providers/providers.tsx`](./src/providers/providers.tsx): Privy provider configuration that creates Ethereum and Solana embedded wallets on login for users without wallets
+- [`src/components/sections/create-a-wallet.tsx`](./src/components/sections/create-a-wallet.tsx): Manual embedded-wallet creation examples
+- [`src/components/sections/fund-wallet.tsx`](./src/components/sections/fund-wallet.tsx): Modern funding hooks for Base USDC and Solana USDC funding, deposit addresses, direct fiat onramp funding, and sandbox Bridge bank deposits
+- [`src/components/sections/user-object.tsx`](./src/components/sections/user-object.tsx): Authenticated user object for learning and debugging
 
-Privy's official funding starter is available at [privy-next-funding.vercel.app](https://privy-next-funding.vercel.app/).
+## Quick start
 
-## Quick Start
-
-### 0. Dashboard setup
-
-- Create an app in the Privy dashboard [here](https://dashboard.privy.io/)
-- Configure funding settings if needed [here](https://docs.privy.io/recipes/card-based-funding#funding-wallets-with-apple-pay-and-google-pay)
-
-### 1. Clone the Project
+### 1. Clone the example
 
 ```bash
 mkdir -p privy-next-funding && curl -L https://github.com/privy-io/privy-examples/archive/main.tar.gz | tar -xz --strip=3 -C privy-next-funding examples-main/examples/privy-next-funding && cd privy-next-funding
 ```
 
-### 2. Install Dependencies
+### 2. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-### 3. Configure Environment
+This example already includes `@stripe/crypto` for Stripe Embedded Components onramp support. If you copy the funding flow into an existing app, install `@stripe/crypto` separately. Learn more in [Fiat-to-crypto onramps](https://docs.privy.io/wallets/funding/fiat-onramp).
 
-Copy the example environment file and configure your Privy app credentials:
+### 3. Configure environment
+
+Copy the example environment file:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Update `.env.local` with your Privy app credentials:
+Set the public Privy app ID. This example does not need an app secret because it does not call server routes or direct REST APIs.
 
 ```env
-# Public - Safe to expose in the browser
 NEXT_PUBLIC_PRIVY_APP_ID=your_app_id_here
 
-# Private - Keep server-side only
-PRIVY_APP_SECRET=your_app_secret_here
-
-# Optional: Uncomment if using custom auth URLs or client IDs
-# NEXT_PUBLIC_PRIVY_CLIENT_ID=your_client_id_here
-# NEXT_PUBLIC_PRIVY_AUTH_URL=https://auth.privy.io
+# Optional Solana mainnet RPC used by src/providers/providers.tsx
+NEXT_PUBLIC_SOLANA_MAINNET_RPC_URL=https://api.mainnet-beta.solana.com
 ```
 
-**Important:** Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Keep `PRIVY_APP_SECRET` private and server-side only.
+Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Do not add secrets to this client-only example.
 
-### 4. Start Development Server
+### 4. Configure the Privy dashboard
+
+In the [Privy dashboard](https://dashboard.privy.io), configure the app used by `NEXT_PUBLIC_PRIVY_APP_ID`:
+
+- Enable login methods for the users who will try the demo.
+- Enable embedded wallets. The provider in `src/providers/providers.tsx` creates Ethereum and Solana embedded wallets on login for users without wallets.
+- Enable the funding methods you want surfaced in the unified `useAddFunds` modal.
+- Configure deposit-address support for the USDC routes you want to test. The example hardcodes Base USDC for Ethereum wallets and Solana USDC for Solana wallets.
+- Configure a production fiat onramp provider for the direct `useFiatOnramp` action and the same destination routes.
+- Configure Bridge sandbox bank deposits on the Account Funding page for the `useFundWalletWithBankDeposit` action. The example requests sandbox virtual account deposit instructions for USDC on Base for Ethereum wallets and USDC on Solana for Solana wallets.
+
+### 5. Start the development server
 
 ```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+Open [http://localhost:3000](http://localhost:3000) in a browser.
 
-## Core Functionality
+## Funding flow
 
-### 1. Login with Privy
+1. Log in or sign up with Privy. The app creates embedded wallets automatically for users without wallets.
+2. Review the manual wallet creation section. It remains available for creating additional wallets across supported chains.
+3. Select an Ethereum or Solana wallet in the fund wallet section.
+4. Open unified funding. The example calls `useAddFunds().addFunds()` with a Base USDC or Solana USDC destination based on the selected wallet and lets the SDK modal present configured fiat and crypto options.
+5. Open deposit address. The example calls `useDepositAddress().createDepositAddress()` with the selected wallet address and matching USDC destination.
+6. Open fiat onramp. The example calls `useFiatOnramp().fund()` for a production fiat-to-USDC flow to the selected wallet's network.
+7. Open bank deposit. The example calls `useFundWalletWithBankDeposit().fund()` with `provider: "bridge-sandbox"` and shows Bridge KYC plus virtual account deposit instructions.
+8. Use the `UserObject` panel to inspect the authenticated user and wallet state while learning.
 
-Login or sign up using Privy's pre-built modals.
+Each action requires a selected wallet and displays in-progress or error state in the page.
 
-[`app/page.tsx`](./app/page.tsx)
+## Relevant docs
 
-```tsx
-import { usePrivy } from "@privy-io/react-auth";
-const { login } = usePrivy();
-login();
-```
+- [Account Funding configuration](https://docs.privy.io/wallets/funding/configuration)
+- [Automatic wallet creation](https://docs.privy.io/basics/react/advanced/automatic-wallet-creation)
+- [Add funds](https://docs.privy.io/wallets/funding/add-funds)
+- [Crypto deposit addresses](https://docs.privy.io/wallets/funding/crypto-deposit-addresses)
+- [Bank deposits](https://docs.privy.io/wallets/funding/bank-deposits)
 
-### 2. Create Embedded Wallets
+## Sandbox bank deposit note
 
-Create embedded wallets for your users. Wallets can also be automatically created on login by configuring your PrivyProvider.
+The bank deposit action uses `provider: "bridge-sandbox"`. Bridge sandbox is for testing only: it returns sandbox deposit instructions and does not move real fiat or crypto. Configure a Bridge sandbox API key and bank transfer funding in the Privy dashboard before testing this action.
 
-[`lib/privy/LoginButton.tsx`](./lib/privy/LoginButton.tsx)
+The first sandbox bank deposit run creates a Bridge sandbox customer for the logged-in email user, opens Bridge KYC, then requests sandbox virtual account instructions.
 
-```tsx
-import { useCreateWallet } from "@privy-io/react-auth";
-const { createWallet } = useCreateWallet();
-createWallet({ createAdditional: true });
-```
+## Production fiat onramp warning
 
-### 3. Fund Your Wallet
-
-Fund your wallet using a card, exchange, or external wallet. Privy has bridging integration out of the box powered by Relay.
-
-[`lib/privy/FundingButton.tsx`](./lib/privy/FundingButton.tsx)
-
-```tsx
-import { useFundWallet, useWallets } from "@privy-io/react-auth";
-const { wallets } = useWallets();
-const { fundWallet } = useFundWallet();
-fundWallet(wallets[0].address, { asset: "USDC", amount: "15" });
-```
-
-### 4. Deposit from a Bank Account
-
-The upstream `privy-next-funding` example does not include the bank deposit or virtual account flow. This repo adds Privy's documented `useFundWalletWithBankDeposit` hook.
-
-The `Bank deposit: KYC + virtual account` action opens Privy's Bridge sandbox flow. After the user completes KYC, Privy's modal returns virtual account deposit instructions for bank transfer funding.
-
-```tsx
-import { useFundWalletWithBankDeposit } from "@privy-io/react-auth";
-
-const { fund } = useFundWalletWithBankDeposit();
-
-await fund({
-  source: {
-    assets: ["gbp", "eur", "usd", "mxn", "brl"],
-    defaultAsset: "gbp",
-  },
-  destination: {
-    asset: "usdc",
-    chain: "eip155:8453",
-    address: wallet.address,
-  },
-  provider: "bridge-sandbox",
-});
-```
-
-For production, configure Bridge in the Privy Dashboard and switch the provider to `"bridge"`.
-
-## Relevant Links
-
-- [Privy Dashboard](https://dashboard.privy.io)
-- [Privy Documentation](https://docs.privy.io)
-- [React SDK](https://www.npmjs.com/package/@privy-io/react-auth)
-- [Funding Guide](https://docs.privy.io/guide/react/recipes/misc/funding)
-- [Bank Deposits](https://docs.privy.io/wallets/funding/bank-deposits)
+The fiat-onramp action uses `environment: "production"`. Use an app intended for real-money testing, and only continue with fiat onramp flows when production money movement is expected for the selected Ethereum or Solana wallet.
